@@ -5,6 +5,8 @@ import com.wasil.journal_app.dto.journals.JournalResponse;
 import com.wasil.journal_app.services.JournalService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/journals")
 public class JournalController {
@@ -15,5 +17,17 @@ public class JournalController {
     @PostMapping("/{userId}")
     public JournalResponse createJournal(@PathVariable Long userId, @RequestBody JournalRequest journal){
         return journalService.createJournal(journal, userId);
+    }
+    @GetMapping
+    public List<JournalResponse> getAllJournals() {
+        return journalService.getAllJournals();
+    }
+    @GetMapping("/{userId}")
+    public List<JournalResponse> getJournalsByUserId(@PathVariable Long userId){
+        return journalService.getJournalsByUserId(userId);
+    }
+    @DeleteMapping("/{journalId}")
+    public void deleteJournal(@PathVariable Long journalId){
+        journalService.deleteJournal(journalId);
     }
 }
