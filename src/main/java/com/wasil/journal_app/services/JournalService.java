@@ -43,7 +43,6 @@ public class JournalService {
     public void deleteJournal(Long journalId){
         journalsRepository.deleteById(journalId);
     }
-
     private JournalResponse response(Journals journal){
         return new JournalResponse(journal.getJournalId(), journal.getTitle(), journal.getDescription(), journal.getUser().getUserId());
     }

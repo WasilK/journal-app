@@ -19,13 +19,16 @@ public class UserService {
         this.userRepository = userRepository;
         this.journalsRepository = journalsRepository;
     }
+
     public UserResponse getUserById(Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
         return response(user);
     }
+
     public List<UserResponse> getAllUsers(){
         return userRepository.findAll().stream().map(this::response).toList();
     }
+
     public UserResponse createUser(UserRequest user){
         User newUser = new User();
         newUser.setUsername(user.getUsername());
@@ -36,13 +39,15 @@ public class UserService {
     public void deleteUser(Long userId){
         userRepository.deleteById(userId);
     }
+
     public UserResponse updateUser(Long userId, UserRequest userRequest){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with this id : " + userId));
         user.setUsername(userRequest.getUsername());
         user.setPassword(userRequest.getPassword());
+        userRepository.save(user);
         return response(user);
     }
     private UserResponse response(User user){
-        return new UserResponse(user.getUserId(), user.getUsername(), user.getPassword());
+        return new UserResponse(user.getUserId(), user.getUsername());
     }
 }

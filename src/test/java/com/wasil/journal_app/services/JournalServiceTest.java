@@ -100,4 +100,5 @@ class JournalServiceTest {
         assertEquals("First", result.get(0).getTitle());
         assertEquals("Second", result.get(1).getTitle());
     }
+
 }
