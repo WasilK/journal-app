@@ -40,6 +40,17 @@ public class JournalService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
         return journalsRepository.findByUser(user).stream().map(this::response).toList();
     }
+    public JournalResponse getJournalById(Long id){
+        Journals journal = journalsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Journal not found with id : " + id));
+        return response(journal);
+    }
+    public JournalResponse updateJournal(JournalRequest request, Long journalId){
+        Journals journal = journalsRepository.findById(journalId).orElseThrow(() -> new ResourceNotFoundException("Journal not found with id : " + journalId));
+        journal.setTitle(request.getTitle());
+        journal.setDescription(request.getDescription());
+        journalsRepository.save(journal);
+        return response(journal);
+    }
     public void deleteJournal(Long journalId){
         journalsRepository.deleteById(journalId);
     }

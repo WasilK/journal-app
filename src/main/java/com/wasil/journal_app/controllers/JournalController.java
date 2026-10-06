@@ -22,9 +22,17 @@ public class JournalController {
     public List<JournalResponse> getAllJournals() {
         return journalService.getAllJournals();
     }
+    @GetMapping("/{journalId}")
+    public JournalResponse getJournalById(@PathVariable Long journalId){
+        return journalService.getJournalById(journalId);
+    }
     @GetMapping("/{userId}")
     public List<JournalResponse> getJournalsByUserId(@PathVariable Long userId){
         return journalService.getJournalsByUserId(userId);
+    }
+    @PutMapping("/{journalId}")
+    public JournalResponse updateJournal(@RequestBody JournalRequest request, @PathVariable Long journalId){
+        return journalService.updateJournal(request, journalId);
     }
     @DeleteMapping("/{journalId}")
     public void deleteJournal(@PathVariable Long journalId){

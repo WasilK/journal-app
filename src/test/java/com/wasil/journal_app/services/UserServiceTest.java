@@ -36,10 +36,6 @@ class UserServiceTest {
     }
 
     @Test
-    void getAllUsers() {
-    }
-
-    @Test
     void createUser() {
         UserRequest request = new UserRequest("name", "password");
 
@@ -55,10 +51,6 @@ class UserServiceTest {
 
         assertNotNull(result);
         assertEquals("name", result.getUsername());
-    }
-
-    @Test
-    void deleteUser() {
     }
 
     @Test

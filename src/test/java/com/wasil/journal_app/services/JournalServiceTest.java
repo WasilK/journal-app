@@ -3,7 +3,6 @@ package com.wasil.journal_app.services;
 
 import com.wasil.journal_app.dto.journals.JournalRequest;
 import com.wasil.journal_app.dto.journals.JournalResponse;
-import com.wasil.journal_app.exceptions.ResourceNotFoundException;
 import com.wasil.journal_app.models.Journals;
 import com.wasil.journal_app.models.User;
 import com.wasil.journal_app.respository.JournalsRepository;
@@ -101,4 +100,28 @@ class JournalServiceTest {
         assertEquals("Second", result.get(1).getTitle());
     }
 
+    @Test
+    void updateJournalTest(){
+        Long journalId = 1L;
+        Journals journal = new Journals();
+        journal.setJournalId(journalId);
+        journal.setTitle("Old Title");
+        journal.setUser(new User());
+        journal.setDescription("Old Description");
+
+        JournalRequest request = new JournalRequest();
+        request.setTitle("New Title");
+        request.setDescription("New Description");
+
+        when(journalsRepository.findById(journalId)).thenReturn(Optional.of(journal));
+        when(journalsRepository.save(any(Journals.class))).thenReturn(journal);
+
+        JournalResponse result = journalService.updateJournal(request, journalId);
+
+        verify(journalsRepository, times(1)).findById(journalId);
+        verify(journalsRepository, times(1)).save(journal);
+
+        assertEquals(journal.getTitle(), result.getTitle());
+        assertEquals(journal.getDescription(), result.getDescription());
+    }
 }
