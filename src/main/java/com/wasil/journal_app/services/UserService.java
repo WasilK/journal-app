@@ -4,14 +4,15 @@ import com.wasil.journal_app.dto.user.UserRequest;
 import com.wasil.journal_app.dto.user.UserResponse;
 import com.wasil.journal_app.exceptions.ResourceNotFoundException;
 import com.wasil.journal_app.models.User;
-import com.wasil.journal_app.respository.JournalsRepository;
 import com.wasil.journal_app.respository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,7 +45,11 @@ public class UserService {
     }
 
     public UserResponse updateUser(String username, UserRequest userRequest){
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found with this name"));
+        log.info("Updating user with username {}", username);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            log.warn("User with username{} not found", username);
+            return new ResourceNotFoundException("User not found with this name");
+        });
         user.setUsername(userRequest.getUsername());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         userRepository.save(user);

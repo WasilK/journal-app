@@ -1,0 +1,39 @@
+<configuration>
+
+    <appender name = "myConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n
+            </pattern>
+        </encoder>
+    </appender>
+
+<!--    <appender name = "myFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>-->
+<!--            journalApp.log-->
+<!--        </file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>journalApp-%d{yy-MM-dd_HH-mm}.%i.log</fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>10</maxHistory>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>-->
+<!--                %d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n-->
+<!--            </pattern>-->
+<!--        </encoder>-->
+<!--    </appender>--> this is the file appender configuration, which is used to create a journalApp.log file in the root directory of the project. The log file will be rolled over based on size and time, with a maximum of 10 files retained.
+    <appender name = "myFileAppender" class="ch.qos.logback.core.FileAppender">
+        <file>journalApp.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="myConsoleAppender" />
+        <appender-ref ref="myFileAppender" />
+    </root>
+
+
+</configuration>

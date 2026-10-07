@@ -10,6 +10,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -22,6 +24,8 @@ class UserServiceTest {
     private UserService userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void getUserById() {
@@ -55,21 +59,42 @@ class UserServiceTest {
 
     @Test
     void updateUser() {
+
+        // Arrange
         Long userId = 1L;
+
         User user = new User();
         user.setUserId(userId);
         user.setUsername("oldName");
         user.setPassword("oldPassword");
 
-        UserRequest request = new UserRequest("newName", "newPassword");
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        UserRequest request =
+                new UserRequest("newName", "newPassword");
 
-        UserResponse result = userService.updateUser(userId, request);
+        when(userRepository.findByUsername("oldName"))
+                .thenReturn(Optional.of(user));
 
-        verify(userRepository, times(1)).findById(userId);
-        verify(userRepository, times(1)).save(user);
+        when(passwordEncoder.encode("newPassword"))
+                .thenReturn("encodedPassword");
+
+        when(userRepository.save(any(User.class)))
+                .thenReturn(user);
+
+        // Act
+        UserResponse result =
+                userService.updateUser("oldName", request);
+
+        // Assert
+        verify(userRepository, times(1))
+                .findByUsername("oldName");
+
+        verify(passwordEncoder, times(1))
+                .encode("newPassword");
+
+        verify(userRepository, times(1))
+                .save(user);
 
         assertEquals("newName", result.getUsername());
+        assertEquals("encodedPassword", user.getPassword());
     }
 }

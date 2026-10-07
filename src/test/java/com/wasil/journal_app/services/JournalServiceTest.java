@@ -3,6 +3,7 @@ package com.wasil.journal_app.services;
 
 import com.wasil.journal_app.dto.journals.JournalRequest;
 import com.wasil.journal_app.dto.journals.JournalResponse;
+import com.wasil.journal_app.exceptions.ResourceNotFoundException;
 import com.wasil.journal_app.models.Journals;
 import com.wasil.journal_app.models.User;
 import com.wasil.journal_app.respository.JournalsRepository;
@@ -33,16 +34,18 @@ class JournalServiceTest {
     @Test
     void testCreateJournal(){
         Long userId = 10L;
+        String username = "name";
         User user = new User();
         user.setUserId(userId);
+        user.setUsername(username);
 
         JournalRequest request = new JournalRequest();
         request.setTitle("My Title");
         request.setDescription("My Description");
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
-        JournalResponse result = journalService.createJournal(request, userId);
+        JournalResponse result = journalService.createJournal(request, username);
 
         ArgumentCaptor<Journals> captor = ArgumentCaptor.forClass(Journals.class);
         verify(journalsRepository, times(1)).save(captor.capture());
@@ -56,23 +59,25 @@ class JournalServiceTest {
         assertEquals("My Title", result.getTitle());
         assertEquals("My Description", result.getDescription());
 
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByUsername(username);
         verifyNoMoreInteractions(userRepository, journalsRepository);
     }
 
     @Test
     void createJournal_userNotFound(){
         Long id = 11L;
+        String username = "name";
         User user = new User();
         user.setUserId(id);
+        user.setUsername(username);
         JournalRequest request = new JournalRequest();
         request.setTitle("Title");
         request.setDescription("Description");
 
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class,
-                () -> journalService.createJournal(request, id));
+        assertThrows(ResourceNotFoundException.class,
+                () -> journalService.createJournal(request, username));
 
         verify(journalsRepository, never()).save(any(Journals.class));
     }
@@ -102,23 +107,31 @@ class JournalServiceTest {
 
     @Test
     void updateJournalTest(){
+        Long userId = 10L;
+        String username = "name";
+        User user = new User();
+        user.setUserId(userId);
+        user.setUsername(username);
+
         Long journalId = 1L;
         Journals journal = new Journals();
         journal.setJournalId(journalId);
         journal.setTitle("Old Title");
-        journal.setUser(new User());
+        journal.setUser(user);
         journal.setDescription("Old Description");
 
         JournalRequest request = new JournalRequest();
         request.setTitle("New Title");
         request.setDescription("New Description");
 
-        when(journalsRepository.findById(journalId)).thenReturn(Optional.of(journal));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+        when(journalsRepository.findByJournalIdAndUser(journalId, user)).thenReturn(Optional.of(journal));
         when(journalsRepository.save(any(Journals.class))).thenReturn(journal);
 
-        JournalResponse result = journalService.updateJournal(request, journalId);
+        JournalResponse result = journalService.updateJournal(request, journalId, username);
 
-        verify(journalsRepository, times(1)).findById(journalId);
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(journalsRepository, times(1)).findByJournalIdAndUser(journalId, user);
         verify(journalsRepository, times(1)).save(journal);
 
         assertEquals(journal.getTitle(), result.getTitle());
