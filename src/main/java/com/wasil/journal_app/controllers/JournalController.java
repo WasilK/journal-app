@@ -3,6 +3,8 @@ package com.wasil.journal_app.controllers;
 import com.wasil.journal_app.dto.journals.JournalRequest;
 import com.wasil.journal_app.dto.journals.JournalResponse;
 import com.wasil.journal_app.services.JournalService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,28 +16,28 @@ public class JournalController {
     public JournalController(JournalService journalService){
         this.journalService = journalService;
     }
-    @PostMapping("/{userId}")
-    public JournalResponse createJournal(@PathVariable Long userId, @RequestBody JournalRequest journal){
-        return journalService.createJournal(journal, userId);
+    @PostMapping("/me")
+    public JournalResponse createJournal(@RequestBody JournalRequest journal){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return journalService.createJournal(journal, username);
     }
-    @GetMapping
-    public List<JournalResponse> getAllJournals() {
-        return journalService.getAllJournals();
+    @GetMapping("/me")
+    public List<JournalResponse> getJournalsByUsername(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return journalService.getJournalsByUsername(username);
     }
-    @GetMapping("/{journalId}")
-    public JournalResponse getJournalById(@PathVariable Long journalId){
-        return journalService.getJournalById(journalId);
-    }
-    @GetMapping("/{userId}")
-    public List<JournalResponse> getJournalsByUserId(@PathVariable Long userId){
-        return journalService.getJournalsByUserId(userId);
-    }
-    @PutMapping("/{journalId}")
+    @PutMapping("/me/{journalId}")
     public JournalResponse updateJournal(@RequestBody JournalRequest request, @PathVariable Long journalId){
-        return journalService.updateJournal(request, journalId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return journalService.updateJournal(request, journalId, username);
     }
-    @DeleteMapping("/{journalId}")
+    @DeleteMapping("me/{journalId}")
     public void deleteJournal(@PathVariable Long journalId){
-        journalService.deleteJournal(journalId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        journalService.deleteJournal(journalId, username);
     }
 }

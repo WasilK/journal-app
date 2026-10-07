@@ -23,9 +23,9 @@ public class JournalService {
     }
 
     @Transactional
-    public JournalResponse createJournal(JournalRequest journal, Long userId) {
+    public JournalResponse createJournal(JournalRequest journal, String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found with name : " + username));
         Journals newJournal = new Journals();
-        User user = userRepository.findById(userId).orElseThrow();
         newJournal.setTitle(journal.getTitle());
         newJournal.setDescription(journal.getDescription());
         newJournal.setUser(user);
@@ -40,19 +40,26 @@ public class JournalService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id : " + userId));
         return journalsRepository.findByUser(user).stream().map(this::response).toList();
     }
+    public List<JournalResponse> getJournalsByUsername(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found with name : " + username));
+        return journalsRepository.findByUser(user).stream().map(this::response).toList();
+    }
     public JournalResponse getJournalById(Long id){
         Journals journal = journalsRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Journal not found with id : " + id));
         return response(journal);
     }
-    public JournalResponse updateJournal(JournalRequest request, Long journalId){
-        Journals journal = journalsRepository.findById(journalId).orElseThrow(() -> new ResourceNotFoundException("Journal not found with id : " + journalId));
+    public JournalResponse updateJournal(JournalRequest request, Long journalId, String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found with this name"));
+        Journals journal = journalsRepository.findByJournalIdAndUser(journalId, user).orElseThrow(() -> new ResourceNotFoundException("Journal not found with id : " + journalId));
         journal.setTitle(request.getTitle());
         journal.setDescription(request.getDescription());
         journalsRepository.save(journal);
         return response(journal);
     }
-    public void deleteJournal(Long journalId){
-        journalsRepository.deleteById(journalId);
+    public void deleteJournal(Long journalId, String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Username not found."));
+        Journals journal = journalsRepository.findByJournalIdAndUser(journalId, user).orElseThrow(() -> new ResourceNotFoundException("Journal not found."));
+        journalsRepository.delete(journal);
     }
     private JournalResponse response(Journals journal){
         return new JournalResponse(journal.getJournalId(), journal.getTitle(), journal.getDescription(), journal.getUser().getUserId());
