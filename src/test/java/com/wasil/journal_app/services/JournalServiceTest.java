@@ -6,8 +6,8 @@ import com.wasil.journal_app.dto.journals.JournalResponse;
 import com.wasil.journal_app.exceptions.ResourceNotFoundException;
 import com.wasil.journal_app.models.Journals;
 import com.wasil.journal_app.models.User;
-import com.wasil.journal_app.respository.JournalsRepository;
-import com.wasil.journal_app.respository.UserRepository;
+import com.wasil.journal_app.repository.JournalsRepository;
+import com.wasil.journal_app.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

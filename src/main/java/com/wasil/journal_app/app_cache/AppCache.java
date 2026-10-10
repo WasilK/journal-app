@@ -1,7 +1,7 @@
 package com.wasil.journal_app.app_cache;
 
 import com.wasil.journal_app.models.ConfigJournalApp;
-import com.wasil.journal_app.respository.ConfigJournalAppRepository;
+import com.wasil.journal_app.repository.ConfigJournalAppRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.wasil.journal_app.respository;
+package com.wasil.journal_app.repository;
 
 import com.wasil.journal_app.models.Journals;
 import com.wasil.journal_app.models.User;

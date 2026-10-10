@@ -1,7 +1,7 @@
 package com.wasil.journal_app.security;
 
 import com.wasil.journal_app.models.User;
-import com.wasil.journal_app.respository.UserRepository;
+import com.wasil.journal_app.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

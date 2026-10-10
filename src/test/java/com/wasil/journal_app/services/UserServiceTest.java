@@ -3,14 +3,13 @@ package com.wasil.journal_app.services;
 import com.wasil.journal_app.dto.user.UserRequest;
 import com.wasil.journal_app.dto.user.UserResponse;
 import com.wasil.journal_app.models.User;
-import com.wasil.journal_app.respository.UserRepository;
+import com.wasil.journal_app.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;

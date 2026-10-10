@@ -1,11 +1,14 @@
 package com.wasil.journal_app.config;
 
+import com.wasil.journal_app.jwt.JwtAuthenticationFilter;
 import com.wasil.journal_app.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,16 +16,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity // Enables @PreAuthorize role checks globally
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtFilter;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
     @Bean
@@ -34,9 +38,11 @@ public class SecurityConfig {
                 // 2. Configure endpoint authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll() // Public endpoints
-                        .requestMatchers("/admin/**").hasRole("ADMIN")        // Admin only endpoints
+                        .requestMatchers("/admin/**").hasRole("ADMIN")// Admin only endpoints
                         .anyRequest().authenticated()                             // Everything else requires auth
                 )
+                .addFilterBefore(jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class)
 
                 // 3. Set session management to stateless (no HTTP sessions)
                 .sessionManagement(session -> session
@@ -44,7 +50,7 @@ public class SecurityConfig {
                 )
 
                 // 4. Enable HTTP Basic authentication (or custom JWT filter hook)
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(basic -> basic.disable());
 
         return http.build();
     }
@@ -56,14 +62,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
-
-        provider.setPasswordEncoder(passwordEncoder());
-
-        return provider;
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
 

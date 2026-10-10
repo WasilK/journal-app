@@ -4,7 +4,7 @@ import com.wasil.journal_app.dto.user.UserRequest;
 import com.wasil.journal_app.dto.user.UserResponse;
 import com.wasil.journal_app.exceptions.ResourceNotFoundException;
 import com.wasil.journal_app.models.User;
-import com.wasil.journal_app.respository.UserRepository;
+import com.wasil.journal_app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

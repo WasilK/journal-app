@@ -1,6 +1,6 @@
 package com.wasil.journal_app.exceptions;
 
-import org.springframework.beans.factory.parsing.Problem;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
