@@ -1,5 +1,6 @@
 package com.wasil.journal_app.services;
 
+import com.wasil.journal_app.app_cache.AppCache;
 import com.wasil.journal_app.externalApi.Quotes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,12 @@ public class QuoteService {
     String apiKey;
     @Autowired
     RestTemplate restTemplate;
-
-    private static final String api = "https://api.api-ninjas.com/v1/advice";
+    @Autowired
+    private AppCache appCache;
 
     public Quotes getQuote(){
+        String api = appCache.appCache.get("QUOTES_API_KEY");
+        log.info("API URL = {}", api);
         HttpHeaders headers = new HttpHeaders();
         log.info("API key loaded: {}", apiKey != null && !apiKey.isBlank());
         headers.set("X-Api-Key", apiKey);
